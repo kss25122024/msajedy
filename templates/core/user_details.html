@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تفاصيل المستخدم</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .form-group {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>تفاصيل المستخدم</h2>
+        <form method="post" action="{% url 'save_user_details' user.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="first_name">الاسم</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">اللقب</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="active" name="active">
+                <label for="active">تفعيل</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="staff" name="staff">
+                <label for="staff">موظف</label>
+            </div>
+            <div class="form-group">
+                <label>مجموعات المستخدمين:</label>
+                {% for group in groups %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="group{{ group.id }}" name="groups[]" value="{{ group.id }}">
+                        <label class="form-check-label" for="group{{ group.id }}">{{ group.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="form-group directorates-list" id="directorates-list">
+                <label>المديريات:</label>
+                {% for directorate in directorates %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="directorate{{ directorate.id }}" name="directorates[]" value="{{ directorate.id }}">
+                        <label class="form-check-label" for="directorate{{ directorate.id }}">{{ directorate.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">حفظ</button>
+                <button type="reset" class="btn btn-warning">إعادة تعيين</button>
+                <a href="{% url 'manage_users' %}" class="btn btn-primary">العودة</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

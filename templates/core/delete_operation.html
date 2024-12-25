@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تأكيد حذف العملية</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>تأكيد حذف العملية</h2>
+        <p>هل أنت متأكد من أنك تريد حذف العملية المتعلقة بـ {{ operation.entity_name }}؟</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="delete" class="btn btn-danger">حذف</button>
+            <a href="{% url 'new_operations' %}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</body>
+</html>

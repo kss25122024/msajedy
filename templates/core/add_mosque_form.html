@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>إضافة مسجد</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 900px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-control {
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .btn {
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #343a40;
+            border-bottom: 2px solid #007bff;
+            display: inline-block;
+        }
+        .info-box {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>إضافة مسجد في {{ area.name }} ({{ area.directorate.name }})</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="info-box">
+                        <div class="section-title">بيانات المسجد</div>
+                        <div class="form-group">
+                            <label for="name">اسم المسجد:</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mosque_type">نوع الجامع:</label>
+                            <select id="mosque_type" name="mosque_type" class="form-control" required>
+                                <option value="جمعة">جمعة</option>
+                                <option value="جماعة">جماعة</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="womens_prayer_area">مصلى النساء:</label>
+                            <select id="womens_prayer_area" name="womens_prayer_area" class="form-control" required>
+                                <option value="true">نعم</option>
+                                <option value="false">لا</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quran_school">مدرسة تحفيظ القرآن الكريم:</label>
+                            <select id="quran_school" name="quran_school" class="form-control" required>
+                                <option value="true">نعم</option>
+                                <option value="false">لا</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="islamic_center">مركز للعلوم الشرعية:</label>
+                            <select id="islamic_center" name="islamic_center" class="form-control" required>
+                                <option value="true">نعم</option>
+                                <option value="false">لا</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="has_awqaf">هل للجامع أوقاف:</label>
+                            <select id="has_awqaf" name="has_awqaf" class="form-control" required>
+                                <option value="true">نعم</option>
+                                <option value="false">لا</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="commercial_units">عدد المحلات التجارية:</label>
+                            <input type="number" id="commercial_units" name="commercial_units" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="houses">عدد البيوت:</label>
+                            <input type="number" id="houses" name="houses" class="form-control" required>
+                        </div>
+                            <div class="form-group">
+                                <label for="farms">عدد المزارع:</label>
+                                <input type="number" id="farms" name="farms" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="rental_apartments">عدد الشقق المؤجرة:</label>
+                                <input type="number" id="rental_apartments" name="rental_apartments" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lands">عدد الأراضي:</label>
+                                <input type="number" id="lands" name="lands" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="wells">عدد الآبار:</label>
+                                <input type="number" id="wells" name="wells" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="khatib_name">اسم الخطيب:</label>
+                                <input type="text" id="khatib_name" name="khatib_name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="khatib_phone">رقم هاتف الخطيب:</label>
+                                <input type="text" id="khatib_phone" name="khatib_phone" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="khatib_whatsapp">رقم واتساب الخطيب:</label>
+                                <input type="text" id="khatib_whatsapp" name="khatib_whatsapp" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imam_name">اسم إمام المسجد:</label>
+                                <input type="text" id="imam_name" name="imam_name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imam_phone">رقم هاتف إمام المسجد:</label>
+                                <input type="text" id="imam_phone" name="imam_phone" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imam_whatsapp">رقم واتساب إمام المسجد:</label>
+                                <input type="text" id="imam_whatsapp" name="imam_whatsapp" class="form-control" required>
+                            </div>
+                            {% if user_role.role == 'admin' or user_role.role == 'manager' %}
+                            <div class="form-group">
+                                <label for="classification">المكون الدعوي:</label>
+                                <select id="classification" name="classification" class="form-control" required>
+                                    <option value="اصلاح">اصلاح</option>
+                                    <option value="تبليغ">تبليغ</option>
+                                    <option value="رشاد">رشاد</option>
+                                    <option value="رابطة">رابطة</option>
+                                    <option value="حكمة">حكمة</option>
+                                    <option value="احسان">احسان</option>
+                                    <option value="الحجوري">الحجوري</option>
+                                    <option value="محمد الامام">محمد الامام</option>
+                                    <option value="مستقل">مستقل</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="btn-container">
+                                <button type="submit" class="btn btn-primary">حفظ</button>
+                                <button type="reset" class="btn btn-warning">إعادة تعيين</button>
+                                <a href="javascript:window.history.back();" class="btn btn-secondary">العودة</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+    

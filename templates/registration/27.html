@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>صفحة مشرف المديرية</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .list-group-item {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h4>المناطق</h4>
+                <ul class="list-group" id="areaList">
+                    <!-- سيتم ملء القائمة باستخدام JavaScript -->
+                </ul>
+                <div class="mt-3">
+                    <button class="btn btn-success" onclick="openAddAreaModal()">إضافة منطقة</button>
+                    <button class="btn btn-warning" onclick="handleEditArea()">تعديل منطقة</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>المساجد</h4>
+                <ul class="list-group" id="mosqueList">
+                    <!-- سيتم ملء القائمة باستخدام JavaScript -->
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4>تفاصيل المسجد</h4>
+                <div id="mosqueDetails">
+                    <!-- سيتم ملء التفاصيل باستخدام JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal لإضافة المنطقة -->
+    <div class="modal fade" id="addAreaModal" tabindex="-1" aria-labelledby="addAreaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAreaModalLabel">إضافة منطقة</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="addAreaForm">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="addAreaName">اسم المنطقة:</label>
+                            <input type="text" class="form-control" id="addAreaName" name="addAreaName" placeholder="أدخل اسم المنطقة" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                        <button type="reset" class="btn btn-secondary">إعادة تعيين</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal لتحديد المنطقة لتعديلها -->
+    <div class="modal fade" id="selectAreaModal" tabindex="-1" aria-labelledby="selectAreaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="selectAreaModalLabel">تحديد منطقة لتعديلها</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>حدد المنطقة التي تريد تعديلها:</p>
+                    <ul class="list-group" id="selectAreaList">
+                        <!-- سيتم ملء القائمة باستخدام JavaScript -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal لتعديل المنطقة -->
+    <div class="modal fade" id="editAreaModal" tabindex="-1" aria-labelledby="editAreaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAreaModalLabel">تعديل المنطقة</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editAreaForm">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <div class="modal-body">
+                        <p><strong>اسم المنطقة القديم:</strong> <span id="oldAreaName"></span></p>
+                        <div class="form-group">
+                            <label for="newAreaName">اسم المنطقة الجديد:</label>
+                            <input type="text" class="form-control" id="newAreaName" name="newAreaName" placeholder="أدخل الاسم الجديد" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                        <button type="reset" class="btn btn-secondary">إعادة تعيين</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedAreaId = null;
+
+        // جلب قائمة المناطق من الخادم
+        function loadAreas() {
+            fetch('/areas/')
+                .then(response => response.json())
+                .then(data => {
+                    const areaList = document.getElementById('areaList');
+                    areaList.innerHTML = '';
+                    const selectAreaList = document.getElementById('selectAreaList');
+                    selectAreaList.innerHTML = '';
+                    data.forEach(area => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.innerHTML = `<input type="checkbox" name="selectedArea" value="${area.id}"> ${area.name}`;
+                        areaList.appendChild(li);
+
+                        const selectLi = document.createElement('li');
+                        selectLi.className = 'list-group-item';
+                        selectLi.innerHTML = `<input type="checkbox" name="selectedArea" value="${area.id}"> ${area.name}`;
+                        selectAreaList.appendChild(selectLi);
+                    });
+                });
+        }
+
+        // فتح نافذة لإضافة منطقة
+        function openAddAreaModal() {
+            $('#addAreaModal').modal('show');
+        }
+
+        // معالجة زر تعديل المنطقة
+        function handleEditArea() {
+            const selectedCheckbox = document.querySelector('input[name="selectedArea"]:checked');
+            if (!selectedCheckbox) {
+                $('#selectAreaModal').modal('show');
+            } else {
+                const areaId = selectedCheckbox.value;
+                const areaName = selectedCheckbox.parentElement.textContent.trim();
+                selectArea(areaId, areaName);
+            }
+        }
+
+        // تحديد المنطقة
+        function selectArea(areaId, areaName) {
+            selectedAreaId = areaId;
+            document.getElementById('oldAreaName').textContent = areaName;
+            $('#selectAreaModal').modal('hide');
+            $('#editAreaModal').modal('show');
+        }
+
+        // معالجة نموذج إضافة المنطقة
+        document.getElementById('addAreaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const newName = document.getElementById('addAreaName').value;
+            fetch('/add_area/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: new URLSearchParams({
+                    name: newName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // تحديث القائمة لعرض المنطقة الجديدة
+                    loadAreas();
+                    // إخفاء نافذة الإضافة
+                    $('#addAreaModal').modal('hide');
+                } else {
+                    alert('حدث خطأ أثناء إضافة المنطقة. حاول مرة أخرى.');
+                }
+            });
+        });
+
+        // معالجة نموذج تعديل المنطقة
+        document.getElementById('editAreaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const newName = document.getElementById('newAreaName').value;
+            fetch(`/update_area/${selectedAreaId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: new URLSearchParams({
+                    name: newName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // تحديث القائمة لعرض الاسم[_{{{CITATION{{{_1{](https://github.com/abdou70/Gmt_foot_Chart/tree/b6b3ff4ed3af881a7d5d2fc930d7553a6ae46162/resources%2Fviews%2FClient%2Fadd.blade.php)[_{{{CITATION{{{_2{](https://github.com/Akishino1998/projectnyervisga/tree/34b073bab9cd4c4378c268c5a3cba9c8cec83180/resources%2Fviews%2Ftoko%2FdataServisan.blade.php)[_{{{CITATION{{{_3{](https://github.com/Mostafa1712002/Sofra/tree/9f53d4c38399a75277a55a723c2c49f76baeaf58/resources%2Fviews%2Fpayments%2Findex.blade.php)[_{{{CITATION{{{_4{](https://github.com/mujahid-work/golf-course/tree/43fc7456b8bf3177039832d2866c47818ce7e42a/application%2Fviews%2Fadmin%2Fpages%2Fmanage_areas.php)

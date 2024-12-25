@@ -1,0 +1,31 @@
+@login_required
+def new_operations(request):
+    user = request.user
+    try:
+        user_role = UserRole.objects.get(user=user)
+    except UserRole.DoesNotExist:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    if user_role.role not in ['admin']:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    # جلب العمليات التي لم تُعرض بعد
+    operations = Operation.objects.filter(shown=False).order_by('-id')
+    
+    operations_info = []
+    for operation in operations:
+        entity_name = 'غير معروف'
+        if operation.operation_type == 'حذف_مسجد':
+            entity_name = operation.entity_name
+        
+        operations_info.append({
+            'operation': operation,
+            'user_full_name': operation.supervisor.get_full_name(),
+            'user_role': operation.supervisor.userrole.role,
+            'entity_name': entity_name
+        })
+
+    directorates = Directorate.objects.all()
+
+    return render(request, 'core/new_operations.html', {'operations_info': operations_info, 'directorates': directorates})
+

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>حذف مسجد</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* الخلفية الملونة */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0;
+            overflow-y: auto; /* إضافة التمرير العمودي */
+        }
+        .container {
+            background-color: #f8f9fa; /* خلفية بطاقة بلون رمادي فاتح */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center;
+            margin-top: 20px;
+        }
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #dc3545; /* لون خلفية مميز للعنوان */
+            color: #ffffff; /* لون النص للعنوان */
+            padding: 10px; /* حشوة داخلية للعنوان */
+            border-radius: 5px; /* زوايا مستديرة للعنوان */
+            position: sticky;
+            top: 0;
+            z-index: 1000; /* لجعل العنوان يظهر فوق باقي المحتوى */
+        }
+        .list-group-item {
+            border: 1px solid #ccc; /* إضافة حواف */
+            background-color: #f9f9f9; /* خلفية العنصر */
+            margin-bottom: 10px; /* مسافة بين العناصر */
+            padding: 10px; /* حشوة داخلية */
+            border-radius: 5px; /* زوايا مستديرة */
+        }
+        .list-group-item:hover {
+            background-color: #e9e9e9; /* تغيير لون الخلفية عند التمرير */
+        }
+        .d-flex {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px; /* مسافة بين الأزرار والنص */
+        }
+        .btn {
+            margin: 5px; /* مسافة بين الأزرار */
+        }
+        .text-center a {
+            margin-top: 15px; /* مسافة بين الرابط والنص */
+        }
+        .search-container {
+            margin-bottom: 20px; /* مسافة بين البحث والعناصر الأخرى */
+            display: flex;
+            justify-content: center;
+        }
+        .search-container input {
+            width: 80%; /* عرض حقل البحث */
+            padding: 5px; /* حشوة داخلية لحقل البحث */
+            border-radius: 5px; /* زوايا مستديرة لحقل البحث */
+            border: 1px solid #ccc; /* حواف لحقل البحث */
+        }
+        .search-container button {
+            margin-left: 10px; /* مسافة بين حقل البحث وزر البحث */
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* تقليل الحشوة للشاشات الصغيرة */
+                width: 90%; /* عرض البطاقة على الشاشات الصغيرة */
+            }
+            h4 {
+                font-size: 18px; /* تصغير حجم الخط للشاشات الصغيرة */
+            }
+        }
+        @media (min-width: 768px) and (max-width: 992px) {
+            .container {
+                padding: 25px; /* حشوة متوسطة للشاشات المتوسطة */
+            }
+            h4 {
+                font-size: 24px; /* ضبط حجم الخط للشاشات المتوسطة */
+            }
+        }
+    </style>
+    <script>
+        function searchMosques() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('searchInput');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("mosqueList");
+            li = ul.getElementsByTagName('li');
+
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("label")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h4>حذف مسجد في مديرية {{ directorate.name }}</h4>
+        <div class="search-container">
+            <input type="text" id="searchInput" onkeyup="searchMosques()" placeholder="بحث...">
+            <button class="btn btn-primary" onclick="searchMosques()">بحث</button>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <ul class="list-group" id="mosqueList">
+                {% for mosque in mosques %}
+                    <li class="list-group-item">
+                        <input type="radio" name="selected_mosque" value="{{ mosque.id }}"> 
+                        <label>{{ mosque.name }} - {{ mosque.area.name }}</label>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-danger">حذف مسجد</button>
+                <button type="reset" class="btn btn-secondary">إعادة تعيين</button>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <a href="{% url 'directorate_supervisor_page' %}" class="btn btn-success">عودة</a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

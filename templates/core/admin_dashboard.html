@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>لوحة تحكم الأدمن</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* جعل كل شيء في الوسط عموديًا وأفقيًا */
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 800px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap; /* السماح بالتغليف عند الحاجة */
+            margin-bottom: 20px;
+        }
+        .icon {
+            width: 150px; /* زيادة عرض الأيقونة */
+            height: 150px; /* زيادة ارتفاع الأيقونة */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* تأثير الظل لإعطاء تأثير ثلاثي الأبعاد */
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .icon:hover {
+            transform: translateY(-10px); /* تحريك الأيقونة للأعلى عند التحويم */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* زيادة الظل عند التحويم */
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 576px) {
+            .icon-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .icon {
+                width: 100%;
+                max-width: 200px; /* الحد الأقصى لعرض الأيقونة للشاشات الصغيرة */
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+    <script>
+        function showUsers() {
+            window.location.href = "{% url 'manage_users' %}";
+        }
+
+        function showDirectorates() {
+            window.location.href = "{% url 'manage_directorates' %}";
+        }
+
+        function showNewOperations() {
+            window.location.href = "{% url 'new_operations' %}";
+        }
+
+        function showStatistics() {
+            window.location.href = "{% url 'show_statistics' %}";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>مرحبا، بالشيخ: <small><strong>{{ user.get_full_name }}</strong></small></div>
+            <a href="{% url 'logout' %}" class="btn btn-danger">تسجيل خروج</a>
+        </div>
+        <div class="icon-container">
+            <div class="icon" onclick="showUsers()"><h4>المستخدمون</h4></div>
+            <div class="icon" onclick="showDirectorates()"><h4>إدارة المديريات</h4></div>
+            <div class="icon" onclick="showNewOperations()"><h4>العمليات الجديدة</h4></div>
+            <div class="icon" onclick="showStatistics()"><h4>الإحصاءات</h4></div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

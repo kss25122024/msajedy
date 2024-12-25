@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تسجيل الدخول</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        /* إعدادات الجسم الأساسية */
+        body {
+            direction: rtl;
+            text-align: right;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #547b8b; /* اللون الافتراضي */
+            transition: background-color 0.3s ease; /* تأثير سلس لتغيير اللون */
+        }
+
+        /* تغيير اللون في الشاشات الأصغر من 768px */
+        @media (max-width: 768px) {
+            body {
+                background-color: #a4b9c3; /* اللون الفاتح عند تصغير الشاشة */
+            }
+        }
+
+        /* تصميم البطاقة */
+        .card {
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+
+        .card-title {
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .form-group label {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.6);
+        }
+
+        .btn {
+            width: 100%;
+            background-color: #3498db;
+            border: none;
+            padding: 12px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .alert {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            margin-top: 20px;
+        }
+
+        .text-center {
+            margin-top: 20px;
+        }
+
+        /* تصميم متجاوب للموبايل */
+        @media (max-width: 576px) {
+            .card {
+                padding: 20px;
+            }
+            .card-title {
+                font-size: 1.2rem;
+            }
+            .form-control {
+                font-size: 0.95rem;
+            }
+            .btn {
+                padding: 10px;
+                font-size: 1rem;
+            }
+        }
+
+        /* تنسيق للعرض المتوسط بين 768px و 992px */
+        @media (min-width: 768px) and (max-width: 992px) {
+            .card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-center">تسجيل الدخول</h5>
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_username">اسم المستخدم</label>
+                    <input type="text" name="username" id="id_username" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="id_password">كلمة المرور</label>
+                    <input type="password" name="password" id="id_password" class="form-control">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn">دخول</button>
+                </div>
+                {% if form.errors %}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        {{ form.errors }}
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

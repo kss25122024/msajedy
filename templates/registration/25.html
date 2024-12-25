@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>إدارة المديريات</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .list-group-item {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h4>المناطق</h4>
+                <ul class="list-group" id="areaList">
+                    <!-- سيتم ملء القائمة باستخدام JavaScript -->
+                </ul>
+                <div class="mt-3">
+                    <button class="btn btn-warning" onclick="openSelectAreaModal()">تعديل منطقة</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>المساجد</h4>
+                <ul class="list-group" id="mosqueList">
+                    <!-- سيتم ملء القائمة باستخدام JavaScript -->
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4>تفاصيل المسجد</h4>
+                <div id="mosqueDetails">
+                    <!-- سيتم ملء التفاصيل باستخدام JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal لتحديد المنطقة -->
+    <div class="modal fade" id="selectAreaModal" tabindex="-1" aria-labelledby="selectAreaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="selectAreaModalLabel">تحديد منطقة لتعديلها</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>حدد المنطقة التي تريد تعديلها:</p>
+                    <ul class="list-group" id="selectAreaList">
+                        <!-- سيتم ملء القائمة باستخدام JavaScript -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal لتعديل المنطقة -->
+    <div class="modal fade" id="editAreaModal" tabindex="-1" aria-labelledby="editAreaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAreaModalLabel">تعديل المنطقة</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editAreaForm">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <p><strong>الاسم القديم للمنطقة:</strong> <span id="oldAreaName"></span></p>
+                        <div class="form-group">
+                            <label for="newAreaName">اسم المنطقة الجديد:</label>
+                            <input type="text" class="form-control" id="newAreaName" name="newAreaName" placeholder="أدخل الاسم الجديد" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                        <button type="reset" class="btn btn-secondary">إعادة تعيين</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedAreaId = null;
+        let selectedAreaOldName = null;
+
+        // جلب قائمة المناطق من الخادم
+        function loadAreas() {
+            fetch('/areas/')
+                .then(response => response.json())
+                .then(data => {
+                    const areaList = document.getElementById('areaList');
+                    areaList.innerHTML = '';
+                    const selectAreaList = document.getElementById('selectAreaList');
+                    selectAreaList.innerHTML = '';
+                    data.forEach(area => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = area.name;
+                        li.setAttribute('data-id', area.id);
+                        li.onclick = () => selectArea(area.id, area.name);
+                        areaList.appendChild(li);
+
+                        const selectLi = document.createElement('li');
+                        selectLi.className = 'list-group-item';
+                        selectLi.textContent = area.name;
+                        selectLi.setAttribute('data-id', area.id);
+                        selectLi.onclick = () => selectArea(area.id, area.name);
+                        selectAreaList.appendChild(selectLi);
+                    });
+                });
+        }
+
+        // فتح نافذة لتحديد المنطقة
+        function openSelectAreaModal() {
+            $('#selectAreaModal').modal('show');
+        }
+
+        // تحديد المنطقة
+        function selectArea(areaId, areaName) {
+            selectedAreaId = areaId;
+            selectedAreaOldName = areaName;
+            document.getElementById('oldAreaName').textContent = areaName;
+            $('#selectAreaModal').modal('hide');
+            $('#editAreaModal').modal('show');
+        }
+
+        // معالجة نموذج تعديل المنطقة
+        document.getElementById('editAreaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const newName = document.getElementById('newAreaName').value;
+            fetch(`/update_area/${selectedAreaId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: new URLSearchParams({
+                    name: newName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadAreas();
+                    $('#editAreaModal').modal('hide');
+                } else {
+                    alert('حدث خطأ أثناء تعديل المنطقة. حاول مرة أخرى.');
+                }
+            });
+        });
+
+        // بدء التحميل
+        window.onload = () => {
+            loadAreas();
+        };
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    

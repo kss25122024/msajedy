@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تعديل منطقة</title>
+    {%load static%}
+    <link rel="stylesheet" href="{% static "css/bootstrap.css" %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+        }
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4>تعديل منطقة في مديرية {{ directorate.name }}</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">حفظ</button>
+            <button type="reset" class="btn btn-danger">إعادة تعيين</button>
+        </form>
+        <div class="mt-3">
+            <a href="{% if user_role.role == 'directorate_supervisor' %}{% url 'directorate_supervisor_page' %}{% elif user_role.role == 'manager' %}{% url 'manager_page' %}{% elif user_role.role == 'admin' %}{% url 'admin_dashboard' %}{% endif %}" class="btn btn-success">العودة</a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

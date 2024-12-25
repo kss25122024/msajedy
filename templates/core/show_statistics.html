@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>إحصاءات</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 1200px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+        .chart {
+            text-align: center;
+        }
+        .back-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .stats-list {
+            list-style: none;
+            padding: 0;
+        }
+        .stats-list li {
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* حشوة أقل للشاشات الصغيرة */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>إحصاءات</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h4>عدد المستخدمين: {{ user_count }}</h4>
+                <h4>عدد المديريات: {{ directorate_count }}</h4>
+                <h4>عدد المناطق: {{ area_count }}</h4>
+                <h4>عدد المساجد: {{ mosque_count }}</h4>
+            </div>
+            <div class="col-md-6 chart">
+                <h4>تفاصيل المساجد</h4>
+                <img src="data:image/png;base64,{{ charts.types }}" alt="Pie Chart">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h4>أنواع المساجد</h4>
+                <ul class="stats-list">
+                    {% for type, count in mosque_details.types.items %}
+                        <li>{{ type }}: {{ count }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h4>تفاصيل أخرى:</h4>
+                <ul class="stats-list">
+                    <li>مصلى النساء: {{ mosque_details.womens_prayer_area }}</li>
+                    <img src="data:image/png;base64,{{ charts.womens_prayer_area }}" alt="Pie Chart">
+                    <li>مدرسة القرآن: {{ mosque_details.quran_school }}</li>
+                    <img src="data:image/png;base64,{{ charts.quran_school }}" alt="Pie Chart">
+                    <li>أوقاف: {{ mosque_details.has_awqaf }}</li>
+                    <img src="data:image/png;base64,{{ charts.has_awqaf }}" alt="Pie Chart">
+                    <li>مركز إسلامي: {{ mosque_details.islamic_center }}</li>
+                    <li>المحلات التجارية: {{ mosque_details.commercial_units }}</li>
+                    <li>المنازل: {{ mosque_details.houses }}</li>
+                    <li>الأراضي: {{ mosque_details.lands }}</li>
+                    <li>المزارع: {{ mosque_details.farms }}</li>
+                    <li>الآبار: {{ mosque_details.wells }}</li>
+                </ul>
+            </div>
+            <div class="col-md-6 chart">
+                <h4>تصنيف المسجد:</h4>
+                <img src="data:image/png;base64,{{ charts.classification }}" alt="Pie Chart">
+                <ul class="stats-list">
+                    {% for classification, count in mosque_details.classification.items %}
+                        <li>{{ classification }}: {{ count }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h4>تفاصيل المديريات</h4>
+                <ul class="stats-list">
+                    {% for directorate, details in directorate_details.items %}
+                        <li>{{ directorate }}: عدد المناطق - {{ details.area_count }}, عدد المساجد - {{ details.mosque_count }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="chart">
+                    <img src="data:image/png;base64,{{ charts.directorates }}" alt="Pie Chart">
+                </div>
+            </div>
+        </div>
+        <div class="back-button">
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-success">العودة</a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

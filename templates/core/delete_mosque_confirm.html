@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تأكيد حذف مسجد</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* الخلفية الملونة */
+            font-family: 'Cairo', sans-serif; /* خط الصفحة */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow-y: auto; /* إضافة التمرير العمودي */
+        }
+        .container {
+            background-color: #ffffff; /* خلفية بيضاء للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #ff0000;
+            font-size: 24px; /* حجم الخط للعنوان */
+        }
+        p {
+            margin-bottom: 15px; /* مسافة بين الفقرات */
+            font-size: 18px; /* حجم الخط للنص */
+        }
+        p strong {
+            color: #333; /* لون النص العادي */
+        }
+        .btn {
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .btn-danger {
+            background-color: #ff0000;
+            border-color: #ff0000;
+        }
+        .btn-danger:hover {
+            background-color: #cc0000;
+            border-color: #cc0000;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* تقليل الحشوة للشاشات الصغيرة */
+                width: 90%; /* عرض البطاقة على الشاشات الصغيرة */
+            }
+            h2 {
+                font-size: 20px; /* تصغير حجم الخط للعنوان للشاشات الصغيرة */
+            }
+            p {
+                font-size: 16px; /* تصغير حجم الخط للنص للشاشات الصغيرة */
+            }
+        }
+        @media (min-width: 768px) and (max-width: 992px) {
+            .container {
+                padding: 25px; /* حشوة متوسطة للشاشات المتوسطة */
+            }
+            h2 {
+                font-size: 22px; /* ضبط حجم الخط للعنوان للشاشات المتوسطة */
+            }
+            p {
+                font-size: 17px; /* ضبط حجم الخط للنص للشاشات المتوسطة */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>نافذة حذف مسجد</h2>
+        <div>
+            <p><strong>المديرية:</strong> {{ mosque.area.directorate.name }}</p>
+            <p><strong>المنطقة:</strong> {{ mosque.area.name }}</p>
+            <p><strong>اسم المسجد:</strong> {{ mosque.name }}</p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="btn-container">
+                <button type="submit" class="btn btn-danger">حذف</button>
+                <a href="javascript:window.history.back();" class="btn btn-success">العودة</a>
+            </div>
+        </form>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تعديل مديرية</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* جعل كل شيء في الوسط عموديًا وأفقيًا */
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff; /* لون النص */
+        }
+        form {
+            width: 100%;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px; /* مسافة بين الأزرار */
+            margin-top: 20px;
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* حشوة أقل للشاشات الصغيرة */
+            }
+            .btn-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>تعديل مديرية</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="directorate_id">اختر المديرية التي تريد تعديلها:</label>
+                <select id="directorate_id" name="directorate_id" class="form-control">
+                    {% for directorate in directorates %}
+                        <option value="{{ directorate.id }}">{{ directorate.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="btn-group">
+                <button type="submit" name="select_directorate" class="btn btn-primary">تعديل</button>
+                <a href="{% url 'manage_directorates' %}" class="btn btn-success">العودة</a>
+            </div>
+        </form>
+        {% if error %}
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

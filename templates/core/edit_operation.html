@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تعديل العملية</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>تعديل {{ operation.get_operation_type_display }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">الاسم</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ entity.name }}" required>
+            </div>
+            {% if operation.operation_type == 'تعديل_مسجد' %}
+            <div class="form-group">
+                <label for="mosque_type">نوع المسجد</label>
+                <input type="text" class="form-control" id="mosque_type" name="mosque_type" value="{{ entity.mosque_type }}">
+                <!-- أضف المزيد من الحقول حسب الحاجة -->
+            </div>
+            {% endif %}
+            <button type="submit" name="save" class="btn btn-primary">حفظ</button>
+            <button type="submit" name="delete" class="btn btn-danger">حذف</button>
+        </form>
+    </div>
+</body>
+</html>

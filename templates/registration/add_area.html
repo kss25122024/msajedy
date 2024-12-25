@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>إضافة منطقة جديدة</title>
+    {%load static%}
+
+    <link rel="stylesheet" href="{% static "css/bootstrap.css" %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+        }<!DOCTYPE html>
+        <html lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <title>إضافة منطقة جديدة</title>
+            {% load static %}
+            <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+            <style>
+                body {
+                    direction: rtl;
+                    text-align: right;
+                    background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+                    height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .container {
+                    margin-top: 20px;
+                    background-color: #ffffff; /* خلفية بيضاء للبطاقة */
+                    padding: 30px; /* حشوة داخلية */
+                    border-radius: 10px; /* زوايا مستديرة */
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+                    max-width: 500px; /* الحد الأقصى لعرض البطاقة */
+                }
+                h4 {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h4>إضافة منطقة جديدة</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                        <button type="reset" class="btn btn-secondary">إعادة تعيين</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{% url 'directorate_supervisor_view' %}" class="btn btn-secondary">العودة</a>
+                </div>
+            </div>
+            <script src="{% static 'js/jquery.js' %}"></script>
+            <script src="{% static 'js/popper.min.js' %}"></script>
+            <script src="{% static 'js/bootstrap.js' %}"></script>
+        </body>
+        </html>
+        
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4>إضافة منطقة جديدة</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">حفظ</button>
+            <button type="reset" class="btn btn-secondary">إعادة تعيين</button>
+        </form>
+        <div class="mt-3">
+            <a href="{% url 'directorate_supervisor_view' %}" class="btn btn-secondary">العودة  </a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

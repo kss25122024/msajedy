@@ -1,0 +1,130 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden, HttpResponseNotFound
+from django.contrib.auth.decorators import login_required
+from .models import UserRole, Operation, Area, Mosque, Directorate
+
+@login_required
+def new_operations(request):
+    user = request.user
+    try:
+        user_role = UserRole.objects.get(user=user)
+    except UserRole.DoesNotExist:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    if user_role.role not in ['admin', 'manager', 'directorate_supervisor']:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    # جلب جميع العمليات وترتيبها بحيث تظهر العمليات الجديدة في البداية
+    operations = Operation.objects.all().order_by('-approved', '-id')
+
+    return render(request, 'core/new_operations.html', {'operations': operations})
+
+
+@login_required
+def approve_operation(request, operation_id):
+    user = request.user
+    try:
+        user_role = UserRole.objects.get(user=user)
+    except UserRole.DoesNotExist:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    if user_role.role not in ['admin', 'manager', 'directorate_supervisor']:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    operation = get_object_or_404(Operation, id=operation_id)
+    operation.approved = True
+    operation.save()
+
+    return redirect('new_operations')
+
+@login_required
+def edit_operation(request, operation_id):
+    operation = get_object_or_404(Operation, id=operation_id)
+    if operation.operation_type in ['إضافة_مسجد', 'تعديل_مسجد']:
+        return redirect('edit_mosque_form', mosque_id=operation.entity_id)
+    elif operation.operation_type in ['إضافة_منطقة', 'تعديل_منطقة']:
+        return redirect('edit_area_form', area_id=operation.entity_id)
+    return HttpResponseForbidden("نوع العملية غير مدعوم للتعديل.")
+
+@login_required
+def delete_operation(request, operation_id):
+    operation = get_object_or_404(Operation, id=operation_id)
+    try:
+        entity = get_object_or_404(Area if 'منطقة' in operation.operation_type else Mosque, id=operation.entity_id)
+    except Http404:
+        return HttpResponseNotFound("لم يتم العثور على الكيان المطلوب.")
+    
+    if request.method == 'POST':
+        entity.delete()
+        operation.delete()
+        return redirect('new_operations')
+    
+    return render(request, 'core/delete_operation.html', {'operation': operation, 'entity': entity})
+
+
+
+
+
+
+
+    from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden, HttpResponseNotFound
+from django.contrib.auth.decorators import login_required
+from .models import UserRole, Operation, Area, Mosque, Directorate
+
+@login_required
+def new_operations(request):
+    user = request.user
+    try:
+        user_role = UserRole.objects.get(user=user)
+    except UserRole.DoesNotExist:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    if user_role.role not in ['admin', 'manager', 'directorate_supervisor']:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    # جلب جميع العمليات وترتيبها بحيث تظهر العمليات الجديدة في البداية
+    operations = Operation.objects.all().order_by('-approved', '-id')
+
+    return render(request, 'core/new_operations.html', {'operations': operations})
+
+@login_required
+def approve_operation(request, operation_id):
+    user = request.user
+    try:
+        user_role = UserRole.objects.get(user=user)
+    except UserRole.DoesNotExist:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    if user_role.role not in ['admin', 'manager', 'directorate_supervisor']:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    operation = get_object_or_404(Operation, id=operation_id)
+    operation.approved = True
+    operation.save()
+
+    return redirect('new_operations')
+
+@login_required
+def edit_operation(request, operation_id):
+    operation = get_object_or_404(Operation, id=operation_id)
+    if operation.operation_type in ['إضافة_مسجد', 'تعديل_مسجد']:
+        return redirect('edit_mosque_form', mosque_id=operation.entity_id)
+    elif operation.operation_type in ['إضافة_منطقة', 'تعديل_منطقة']:
+        return redirect('edit_area_form', area_id=operation.entity_id)
+    return HttpResponseForbidden("نوع العملية غير مدعوم للتعديل.")
+
+@login_required
+def delete_operation(request, operation_id):
+    operation = get_object_or_404(Operation, id=operation_id)
+    try:
+        entity = get_object_or_404(Area if 'منطقة' in operation.operation_type else Mosque, id=operation.entity_id)
+    except Http404:
+        return HttpResponseNotFound("لم يتم العثور على الكيان المطلوب.")
+    
+    if request.method == 'POST':
+        entity.delete()
+        operation.delete()
+        return redirect('new_operations')
+    
+    return render(request, 'core/delete_operation.html', {'operation': operation, 'entity': entity})

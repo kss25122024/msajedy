@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تحديث بيانات المسجد</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow-y: auto; /* إضافة التمرير العمودي */
+        }
+        .container {
+            background-color: #e0f7fa; /* خلفية بطاقة بلون أزرق فاتح */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center;
+            margin-top: 20px;
+        }
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #007bff; /* لون خلفية مناسب للعنوان */
+            color: #ffffff; /* لون النص للعنوان */
+            padding: 10px; /* حشوة داخلية للعنوان */
+            border-radius: 5px; /* زوايا مستديرة للعنوان */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label,
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            margin-bottom: 10px; /* مسافة بين العناصر */
+        }
+        .d-flex {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px; /* مسافة بين الأزرار والنص */
+        }
+        .btn {
+            margin: 5px; /* مسافة بين الأزرار */
+        }
+        .text-center a {
+            margin-top: 15px; /* مسافة بين الرابط والنص */
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* تقليل الحشوة للشاشات الصغيرة */
+                width: 90%; /* عرض البطاقة على الشاشات الصغيرة */
+            }
+            h4 {
+                font-size: 18px; /* تصغير حجم الخط للشاشات الصغيرة */
+            }
+        }
+        @media (min-width: 768px) and (max-width: 992px) {
+            .container {
+                padding: 25px; /* حشوة متوسطة للشاشات المتوسطة */
+            }
+            h4 {
+                font-size: 24px; /* ضبط حجم الخط للشاشات المتوسطة */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4>تحديث بيانات المسجد</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-primary">حفظ</button>
+                <button type="reset" class="btn btn-secondary">إعادة تعيين</button>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <a href="{% url 'edit_mosque' %}" class="btn btn-success">العودة</a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

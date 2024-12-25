@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>العمليات الجديدة</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية ملونة */
+            font-family: 'Cairo', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1.2rem;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+        }
+        th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+        .btn {
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .approved {
+            background-color: #d4edda !important;
+        }
+        .completed {
+            background-color: #d4edda !important; /* لون أخضر عند اكتمال العملية */
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+            }
+            th, td {
+                padding: 0.8rem;
+            }
+            .btn {
+                padding: 5px 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script>
+        async function clearTable() {
+            const rows = document.querySelectorAll('tbody tr');
+            for (const row of rows) {
+                const approveButton = row.querySelector('.btn-success');
+                if (approveButton) {
+                    await approveOperation(approveButton, approveButton.getAttribute('data-id'));
+                }
+            }
+        }
+
+        async function approveOperation(button, operationId) {
+            const row = button.closest('tr');
+            // إرسال طلب للموافقة على العملية هنا
+            try {
+                const response = await fetch(`/approve_operation/${operationId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                });
+                if (response.ok) {
+                    row.remove();
+                } else {
+                    console.error('Failed to approve operation');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function deleteOperation(button, operationId) {
+            const row = button.closest('tr');
+            // إرسال طلب لحذف العملية هنا
+            try {
+                const response = await fetch(`/delete_operation/${operationId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                });
+                if (response.ok) {
+                    row.remove();
+                } else {
+                    console.error('Failed to delete operation');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function showAlert() {
+            const alertBox = document.querySelector('.alert');
+            alertBox.style.display = 'block';
+        }
+
+        function hideAlert() {
+            const alertBox = document.querySelector('.alert');
+            alertBox.style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>العمليات الجديدة</h2>
+        <div class="alert alert-warning text-center" role="alert" style="display:none;">
+            <p>عند مسح القائمة ستتم الموافقة على جميع العمليات تلقائيًا.</p>
+            <button onclick="clearTable()" class="btn btn-success">موافق</button>
+            <button onclick="hideAlert()" class="btn btn-secondary">العودة</button>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>اسم المستخدم</th>
+                    <th>نوع المستخدم</th>
+                    <th>نوع العملية</th>
+                    <th>اسم المنطقة/المسجد</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for operation in operations %}
+                    <tr>
+                        <td>{{ operation.user.get_full_name }}</td>
+                        <td>{{ operation.user.userrole.role }}</td>
+                        <td>{{ operation.operation_type }}</td>
+                        <td>
+                            {% if 'منطقة' in operation.operation_type %}
+                                {{ operation.entity_name }}
+                            {% else %}
+                                {{ operation.entity_name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button onclick="approveOperation(this, {{ operation.id }})" class="btn btn-success" data-id="{{ operation.id }}">موافق</button>
+                            <button onclick="deleteOperation(this, {{ operation.id }})" class="btn btn-danger" data-id="{{ operation.id }}">حذف</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-center back-button">
+            <button onclick="showAlert()" class="btn btn-warning">مسح القائمة</button>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">العودة</a>
+        </div>
+    </div>
+
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تعديل مسجد</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* جعل كل شيء في الوسط عموديًا وأفقيًا */
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff; /* لون النص */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .search-container button {
+            padding: 10px 20px;
+        }
+        .form-group select option {
+            padding: 10px; /* إضافة مسافات بين الخيارات */
+            border-bottom: 1px solid #ddd; /* إضافة حواف سفلية */
+        }
+        .form-group label {
+            color: #007bff; /* لون مميز للعنوان */
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية شفافة قليلاً عند الثبات */
+            padding: 10px 0; /* حشوة داخلية للعنوان */
+            z-index: 1000; /* لجعل العنوان يظهر فوق باقي المحتوى */
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* مسافة بين الأزرار */
+            margin-top: 20px; /* مسافة علوية للأزرار */
+        }
+        /* تنسيق متجاوب */
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* حشوة أقل للشاشات الصغيرة */
+            }
+            .search-container {
+                flex-direction: column;
+            }
+            .search-container input {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            .search-container button {
+                width: 100%;
+                padding: 10px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>تعديل مسجد</h2>
+        <div>
+            <p><strong>المديرية:</strong> {{ mosque.area.directorate.name }}</p>
+            <p><strong>المنطقة:</strong> {{ mosque.area.name }}</p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">اسم المسجد:</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ mosque.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="mosque_type">نوع الجامع:</label>
+                <select id="mosque_type" name="mosque_type" class="form-control" required>
+                    <option value="جمعة" {% if mosque.mosque_type == "جمعة" %}selected{% endif %}>جمعة</option>
+                    <option value="جماعة" {% if mosque.mosque_type == "جماعة" %}selected{% endif %}>جماعة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="womens_prayer_area">مصلى النساء:</label>
+                <select id="womens_prayer_area" name="womens_prayer_area" class="form-control" required>
+                    <option value="true" {% if mosque.womens_prayer_area %}selected{% endif %}>نعم</option>
+                    <option value="false" {% if not mosque.womens_prayer_area %}selected{% endif %}>لا</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quran_school">مدرسة تحفيظ القرآن الكريم:</label>
+                <select id="quran_school" name="quran_school" class="form-control" required>
+                    <option value="true" {% if mosque.quran_school %}selected{% endif %}>نعم</option>
+                    <option value="false" {% if not mosque.quran_school %}selected{% endif %}>لا</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="islamic_center">مركز للعلوم الشرعية:</label>
+                <select id="islamic_center" name="islamic_center" class="form-control" required>
+                    <option value="true" {% if mosque.islamic_center %}selected{% endif %}>نعم</option>
+                    <option value="false" {% if not mosque.islamic_center %}selected{% endif %}>لا</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="has_awqaf">هل للجامع أوقاف:</label>
+                <select id="has_awqaf" name="has_awqaf" class="form-control" required>
+                    <option value="true" {% if mosque.has_awqaf %}selected{% endif %}>نعم</option>
+                    <option value="false" {% if not mosque.has_awqaf %}selected{% endif %}>لا</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="commercial_units">عدد المحلات التجارية:</label>
+                <input type="number" id="commercial_units" name="commercial_units" class="form-control" value="{{ mosque.commercial_units }}" required>
+            </div>
+            <div class="form-group">
+                <label for="houses">عدد البيوت:</label>
+                <input type="number" id="houses" name="houses" class="form-control" value="{{ mosque.houses }}" required>
+            </div>
+            <div class="form-group">
+                <label for="farms">عدد المزارع:</label>
+                <input type="number" id="farms" name="farms" class="form-control" value="{{ mosque.farms }}" required>
+            </div>
+            <div class="form-group">
+                <label for="rental_apartments">عدد الشقق المؤجرة:</label>
+                <input type="number" id="rental_apartments" name="rental_apartments" class="form-control" value="{{ mosque.rental_apartments }}" required>
+            </div>
+            <div class="form-group">
+                <label for="lands">عدد الأراضي:</label>
+                <input type="number" id="lands" name="lands" class="form-control" value="{{ mosque.lands }}" required>
+            </div>
+            <div class="form-group">
+                <label for="wells">عدد الآبار:</label>
+                <input type="number" id="wells" name="wells" class="form-control" value="{{ mosque.wells }}" required>
+            </div>
+            <div class="form-group">
+                <label for="khatib_name">اسم الخطيب:</label>
+                <input type="text" id="khatib_name" name="khatib_name" class="form-control" value="{{ mosque.khatib_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="khatib_phone">رقم هاتف الخطيب:</label>
+                <input type="text" id="khatib_phone" name="khatib_phone" class="form-control" value="{{ mosque.khatib_phone }}" required>
+            </div>
+            <div class="form-group">
+                <label for="khatib_whatsapp">رقم واتساب الخطيب:</label>
+                <input type="text" id="khatib_whatsapp" name="khatib_whatsapp" class="form-control" value="{{ mosque.khatib_whatsapp }}" required>
+            </div>
+            <div class="form-group">
+                <label for="imam_name">اسم إمام المسجد:</label>
+                <input type="text" id="imam_name" name="imam_name" class="form-control" value="{{ mosque.imam_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="imam_phone">رقم هاتف إمام المسجد:</label>
+                <input type="text" id="imam_phone" name="imam_phone" class="form-control" value="{{ mosque.imam_phone }}" required>
+            </div>
+            <div class="form-group">
+                <label for="imam_whatsapp">رقم واتساب إمام المسجد:</label>
+                <input type="text" id="imam_whatsapp" name="imam_whatsapp" class="form-control" value="{{ mosque.imam_whatsapp }}" required>
+            </div>
+            {% if user_role.role == 'admin' or user_role.role == 'manager' %}
+            <div class="form-group">
+                <label for="classification">المكون الدعوي:</label>
+                <select id="classification" name="classification" class="form-control" required>
+                    <option value="اصلاح" {% if mosque.classification == "اصلاح" %}selected{% endif %}>اصلاح</option>
+                    <option value="تبليغ" {% if mosque.classification == "تبليغ" %}selected{% endif %}>تبليغ</option>
+                    <option value="رشاد" {% if mosque.classification == "رشاد" %}selected{% endif %}>رشاد</option>
+                    <option value="رابطة" {% if mosque.classification == "رابطة" %}selected{% endif %}>رابطة</option>
+                    <option value="حكمة" {% if mosque.classification == "حكمة" %}selected{% endif %}>حكمة</option>
+                    <option value="احسان" {% if mosque.classification == "احسان" %}selected{% endif %}>احسان</option>
+                    <option value="الحجوري" {% if mosque.classification == "الحجوري" %}selected{% endif %}>الحجوري</option>
+                    <option value="محمد الامام" {% if mosque.classification == "محمد الامام" %}selected{% endif %}>محمد الامام</option>
+                    <option value="مستقل" {% if mosque.classification == "مستقل" %}selected{% endif %}>مستقل</option>
+                    <option value="أخرى" {% if mosque.classification == "أخرى" %}selected{% endif %}>أخرى</option>
+                </select>
+            </div>
+            {% endif %}
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary">حفظ</button>
+                <button type="reset" class="btn btn-warning">إعادة تعيين</button>
+                <a href="javascript:window.history.back();" class="btn btn-secondary">العودة</a>
+            </div>
+        </form>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

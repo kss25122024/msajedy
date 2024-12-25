@@ -1,0 +1,97 @@
+import pandas as pd
+from django.http import HttpResponse, HttpResponseForbidden
+from .models import Mosque, UserRole, Directorate
+
+def export_directorate_data(request, directorate_id=None):
+    user_role = UserRole.objects.get(user=request.user)
+
+    if user_role.role == 'directorate_supervisor':
+        directorate = user_role.directorate
+        mosques = Mosque.objects.filter(area__directorate=directorate).select_related('area__directorate')
+
+        data = []
+        for mosque in mosques:
+            mosque_data = {
+                'اسم المديرية': mosque.area.directorate.name,
+                'اسم المنطقة': mosque.area.name,
+                'اسم المسجد': mosque.name,
+                'نوع الجامع': mosque.mosque_type,
+                'مصلى النساء': 'نعم' if mosque.womens_prayer_area else 'لا',
+                'مدرسة تحفيظ القرآن الكريم': 'نعم' if mosque.quran_school else 'لا',
+                'مركز للعلوم الشرعية': 'نعم' if mosque.islamic_center else 'لا',
+                'هل للجامع أوقاف': 'نعم' if mosque.has_awqaf else 'لا',
+                'عدد المحلات التجارية': mosque.commercial_units if mosque.has_awqaf else '',
+                'عدد البيوت': mosque.houses if mosque.has_awqaf else '',
+                'عدد المزارع': mosque.farms if mosque.has_awqaf else '',
+                'عدد الشقق المؤجرة': mosque.rental_apartments if mosque.has_awqaf else '',
+                'عدد الأراضي': mosque.lands if mosque.has_awqaf else '',
+                'عدد الآبار': mosque.wells if mosque.has_awqaf else '',
+                'اسم الخطيب': mosque.khatib_name,
+                'رقم هاتف الخطيب': mosque.khatib_phone,
+                'رقم واتساب الخطيب': mosque.khatib_whatsapp,
+                'اسم إمام المسجد': mosque.imam_name,
+                'رقم هاتف إمام المسجد': mosque.imam_phone,
+                'رقم واتساب إمام المسجد': mosque.imam_whatsapp,
+            }
+            data.append(mosque_data)
+
+    elif user_role.role in ['manager', 'admin']:
+        if not directorate_id:
+            return HttpResponseForbidden("يجب تحديد المديرية.")
+
+        try:
+            directorate = Directorate.objects.get(id=directorate_id)
+        except Directorate.DoesNotExist:
+            return HttpResponseForbidden("المديرية غير موجودة.")
+
+        if user_role.role == 'manager' and directorate.supervisor != request.user:
+            return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه المديرية.")
+
+        mosques = Mosque.objects.filter(area__directorate=directorate).select_related('area__directorate')
+
+        data = []
+        for mosque in mosques:
+            mosque_data = {
+                'اسم المديرية': mosque.area.directorate.name,
+                'اسم المنطقة': mosque.area.name,
+                'اسم المسجد': mosque.name,
+                'نوع الجامع': mosque.mosque_type,
+                'مصلى النساء': 'نعم' if mosque.womens_prayer_area else 'لا',
+                'مدرسة تحفيظ القرآن الكريم': 'نعم' if mosque.quran_school else 'لا',
+                'مركز للعلوم الشرعية': 'نعم' if mosque.islamic_center else 'لا',
+                'هل للجامع أوقاف': 'نعم' if mosque.has_awqaf else 'لا',
+                'عدد المحلات التجارية': mosque.commercial_units if mosque.has_awqaf else '',
+                'عدد البيوت': mosque.houses if mosque.has_awqaf else '',
+                'عدد المزارع': mosque.farms if mosque.has_awqaf else '',
+                'عدد الشقق المؤجرة': mosque.rental_apartments if mosque.has_awqaf else '',
+                'عدد الأراضي': mosque.lands if mosque.has_awqaf else '',
+                'عدد الآبار': mosque.wells if mosque.has_awqaf else '',
+                'اسم الخطيب': mosque.khatib_name,
+                'رقم هاتف الخطيب': mosque.khatib_phone,
+                'رقم واتساب الخطيب': mosque.khatib_whatsapp,
+                'اسم إمام المسجد': mosque.imam_name,
+                'رقم هاتف إمام المسجد': mosque.imam_phone,
+                'رقم واتساب إمام المسجد': mosque.imam_whatsapp,
+                'التصنيف الدعوي': mosque.classification if user_role.role in ['manager', 'admin'] else ''
+            }
+            data.append(mosque_data)
+
+    else:
+        return HttpResponseForbidden("ليس لديك الأذونات المطلوبة للوصول إلى هذه الصفحة.")
+
+    df = pd.DataFrame(data)
+
+    # إعداد ملف الإكسل
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=directorate_data.xlsx'
+
+    # كتابة ملف إكسل باللغة العربية باستخدام openpyxl
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='بيانات المديرية')
+        workbook = writer.book
+        worksheet = writer.sheets['بيانات المديرية']
+
+        # إعداد الاتجاه من اليمين لليسار
+        worksheet.sheet_view.rightToLeft = True
+
+    return response

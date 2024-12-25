@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>صفحة المدير</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية ملونة */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* تمركز عمودي للعناصر */
+        }
+        .container {
+            margin-top: 20px;
+            background-color: #ffffff; /* خلفية بيضاء للبطاقة */
+            padding: 20px;
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 1200px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h4 {
+            text-align: center;
+            color: #007bff; /* لون النص */
+        }
+        .list-group-item {
+            border: 1px solid #ccc; /* إضافة حواف */
+            background-color: #f9f9f9; /* خلفية العنصر */
+            margin-bottom: 10px; /* مسافة بين العناصر */
+            padding: 10px; /* حشوة داخلية */
+            border-radius: 5px; /* زوايا مستديرة */
+        }
+        .list-group-item:hover {
+            background-color: #e9e9e9; /* تغيير لون الخلفية عند التمرير */
+        }
+        .btn-sm {
+            margin-left: 10px; /* مسافة بين الأزرار والعناصر النصية */
+        }
+        .mt-3 {
+            margin-top: 20px !important; /* مسافة علوية أكبر */
+        }
+        .text-center {
+            text-align: center; /* توسيط النص */
+        }
+        @media (max-width: 576px) {
+            .header {
+                flex-direction: column;
+                align-items: center; /* تمركز العناصر أفقيا */
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px; /* مسافة بين الأزرار للشاشات الصغيرة */
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                مرحبا، بالشيخ: <small><strong>{{ user.get_full_name }}</strong></small>
+            </div>
+            <div>
+                <a href="{% url 'logout' %}" class="btn btn-danger">تسجيل خروج</a>
+            </div>
+            
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <h4>المديريات</h4>
+                
+                <ul class="list-group text-center">
+                    {% for directorate in directorates %}
+                        <li class="list-group-item">
+                            <input type="checkbox">
+                            <span onclick="showAreas({{ directorate.id }})">
+                                {{ directorate.name }}
+                            </span>
+                            <a href="{% url 'export_directorate_data' directorate.id %}" class="btn btn-sm btn-success">تصدير</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4>المناطق</h4>
+                <div class="mt-3 text-center">
+                    <button id="myButton" class="btn btn-success">إضافة</button>
+                    <button id="editarea" class="btn btn-warning">تعديل</button>
+                    <button id="delarea" class="btn btn-danger">حذف</button>
+                </div>
+                <br>
+                <ul class="list-group text-center" id="area-list">
+                    <!-- المناطق سيتم تحميلها هنا بواسطة AJAX -->
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4>المساجد</h4>
+                <div class="mt-3 text-center">
+                    <button id="addMosquetoarea" class="btn btn-success">إضافة</button>
+                    <button id="editmosqueform" class="btn btn-warning">تعديل</button>
+                    <button id="deletemosqueform" class="btn btn-danger">حذف</button>
+                </div>
+                <br>
+                <ul class="list-group text-center" id="mosque-list">
+                    <!-- المساجد سيتم تحميلها هنا بواسطة AJAX -->
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4>بيانات المسجد</h4>
+                <br>
+                <div class="list-group" id="mosqueDetails"></div>
+                <!-- تفاصيل المسجد سيتم تحميلها هنا بواسطة AJAX -->
+            </div>
+        </div>
+    </div>
+    
+        
+    <script>
+        function showAreas(directorateId) {
+            fetch(`/get_areas/${directorateId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const areaList = document.getElementById('area-list');
+                    areaList.innerHTML = '';
+                    data.areas.forEach(area => {
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item');
+                        li.textContent = area.name;
+                        li.onclick = () => showMosques(area.id);
+                        areaList.appendChild(li);
+                    });
+                });
+        }
+
+
+                 //    زر اضافة منطقة
+                 document.getElementById("myButton").addEventListener("click", function() {
+                    window.location.href = "{% url 'add_area' %}";  // استبدل "/" بالرابط الذي ترغب في التوجه إليه
+                });
+
+                //    زر اضافة منطقة
+                document.getElementById("editarea").addEventListener("click", function() {
+                    window.location.href = "{% url 'choose_area_to_edit' %}";  // استبدل "/" بالرابط الذي ترغب في التوجه إليه
+                });
+
+                
+        // معالجة زر تعديل المنطقة
+        function handleEditArea() {
+            const selectedCheckbox = document.querySelector('input[name="selectedArea"]:checked');
+            if (!selectedCheckbox) {
+                $('#selectAreaModal').modal('show');
+            } else {
+                const areaId = selectedCheckbox.value;
+                const areaName = selectedCheckbox.parentElement.textContent.trim();
+                selectArea(areaId, areaName);
+            }
+        }
+
+        // تحديد المنطقة
+        function selectArea(areaId, areaName) {
+            selectedAreaId = areaId;
+            document.getElementById('oldAreaName').textContent = areaName;
+            $('#selectAreaModal').modal('hide');
+            $('#editAreaModal').modal('show');
+        }
+
+
+        
+        //    زر حذف منطقة
+        document.getElementById("delarea").addEventListener("click", function() {
+            window.location.href = "{% url 'choose_area_to_delete' %}";  // استبدل "/" بالرابط الذي ترغب في التوجه إليه
+            });
+
+                
+        function showMosques(areaId) {
+            fetch(`/get_mosques/${areaId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const mosqueList = document.getElementById('mosque-list');
+                    mosqueList.innerHTML = '';
+                    data.mosques.forEach(mosque => {
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item');
+                        li.textContent = mosque.name;
+                        li.onclick = () => showMosqueDetails(mosque.id);
+                        mosqueList.appendChild(li);
+                    });
+                });
+        }
+         // جلب تفاصيل المسجد وعرضها
+    function showMosqueDetails(mosqueId) {
+        fetch(`/mosque/${mosqueId}/`)
+            .then(response => response.json())
+            .then(data => {
+                const mosqueDetails = document.getElementById('mosqueDetails');
+                mosqueDetails.innerHTML = `
+                    <p><strong>اسم المسجد:</strong> ${data.name}</p>
+                    <p><strong>نوع الجامع:</strong> ${data.mosque_type}</p>
+                    <p><strong>مصلى النساء:</strong> ${data.womens_prayer_area ? 'نعم' : 'لا'}</p>
+                    <p><strong>مدرسة تحفيظ القرآن الكريم:</strong> ${data.quran_school ? 'نعم' : 'لا'}</p>
+                    <p><strong>مركز للعلوم الشرعية:</strong> ${data.islamic_center ? 'نعم' : 'لا'}</p>
+                    <p><strong>هل للجامع أوقاف:</strong> ${data.has_awqaf ? 'نعم' : 'لا'}</p>
+                    <p><strong>عدد المحلات التجارية:</strong> ${data.commercial_units}</p>
+                    <p><strong>عدد البيوت:</strong> ${data.houses}</p>
+                    <p><strong>عدد المزارع:</strong> ${data.farms}</p>
+                    <p><strong>عدد الشقق المؤجرة:</strong> ${data.rental_apartments}</p>
+                    <p><strong>عدد الأراضي:</strong> ${data.lands}</p>
+                    <p><strong>عدد الآبار:</strong> ${data.wells}</p>
+                    <p><strong>اسم الخطيب:</strong> ${data.khatib_name}</p>
+                    <p><strong>رقم هاتف الخطيب:</strong> ${data.khatib_phone}</p>
+                    <p><strong>رقم واتساب الخطيب:</strong> ${data.khatib_whatsapp}</p>
+                    <p><strong>اسم إمام المسجد:</strong> ${data.imam_name}</p>
+                    <p><strong>رقم هاتف إمام المسجد:</strong> ${data.imam_phone}</p>
+                    <p><strong>رقم واتساب إمام المسجد:</strong> ${data.imam_whatsapp}</p>
+                    <p><strong>المكون الدعوي:</strong> ${data.classification}</p> <!-- تأكد من أن التسمية صحيحة -->
+                `;
+            });
+    }
+
+             //    زر اضافة مسجد في منطقة
+      
+        document.getElementById("addMosquetoarea").addEventListener("click", function() {
+             window.location.href = "{% url 'choose_area_to_add_mosque' %}";  // استبدل "/" بالرابط الذي ترغب في التوجه إليه
+              });
+         //    زر تعديل مسجد في منطقة
+         document.getElementById("editmosqueform").addEventListener("click", function() {
+            window.location.href = "{% url 'choose_mosque_to_edit' %}";  // استبدل "/" بالرابط الذي ترغب في التوجه إليه
+            });
+
+            //    زر حذف مسجد في منطقة
+            document.getElementById("deletemosqueform").addEventListener("click", function() {
+                window.location.href = "{% url 'choose_mosque_to_delete' %}";  // استبدل "/" بالرابط الذي ترغب في التوجه إليه
+                });
+    
+            
+
+
+
+    </script>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

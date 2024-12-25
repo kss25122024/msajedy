@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>إضافة منطقة جديدة</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+        }
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff; /* لون النص */
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            margin-right: 10px;
+        }
+
+        /* تنسيق متجاوب */
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* حشوة أقل للشاشات الصغيرة */
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* ظل خفيف أقل للشاشات الصغيرة */
+            }
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .form-group label {
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 992px) {
+            .container {
+                padding: 25px; /* حشوة متوسطة للشاشات المتوسطة */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4>إضافة منطقة جديدة</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if user_role.role != 'directorate_supervisor' %}
+                <div class="form-group">
+                    <label for="directorate">اختر مديرية:</label>
+                    <select id="directorate" name="directorate" class="form-control">
+                        <option value="" disabled selected>اختر مديرية</option>
+                        {% for directorate in directorates %}
+                            <option value="{{ directorate.id }}">{{ directorate.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-primary">حفظ</button>
+                <button type="reset" class="btn btn-danger">إعادة تعيين</button>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <a href="{% url back_url %}" class="btn btn-success">العودة</a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

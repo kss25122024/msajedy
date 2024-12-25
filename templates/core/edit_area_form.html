@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تعديل منطقة</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff; /* لون النص */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* مسافة بين الأزرار */
+            margin-top: 20px; /* مسافة علوية للأزرار */
+        }
+        .mt-3 {
+            margin-top: 30px !important; /* مسافة علوية أكبر */
+        }
+        /* تنسيق متجاوب */
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* حشوة أقل للشاشات الصغيرة */
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>تعديل منطقة</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_name">اسم المنطقة القديم:</label>
+                <input type="text" id="id_name" name="old_name" class="form-control" value="{{ area.name }}" readonly>
+            </div>
+            {{ form.as_p }}
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">حفظ</button>
+                <button type="reset" class="btn btn-warning">إعادة تعيين</button>
+            </div>
+        </form>
+        <div class="mt-3">
+            <a href="javascript:window.history.back();" class="btn btn-success">العودة</a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

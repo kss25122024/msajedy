@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>مثال على ربط الزر بالرابط</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="myButton" class="btn btn-primary">اذهب إلى الصفحة الرئيسية</button>
+    </div>
+    
+    <script>
+        document.getElementById("myButton").addEventListener("click", function() {
+            window.location.href = "/";  // استبدل "/" بالرابط الذي ترغب في التوجه إليه
+        });
+    </script>
+</body>
+</html>

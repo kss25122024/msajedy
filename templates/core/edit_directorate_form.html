@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>تعديل مديرية</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* جعل كل شيء في الوسط عموديًا وأفقيًا */
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff; /* لون النص */
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left; /* محاذاة النص داخل النموذج لليسار */
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px; /* مسافة بين الأزرار */
+            margin-top: 20px;
+        }
+        .btn-back {
+            display: block;
+            width: 100%;
+            margin: 20px auto 0; /* محاذاة الزر في الوسط */
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* حشوة أقل للشاشات الصغيرة */
+            }
+            .btn-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .btn-back {
+                margin-top: 10px; /* مسافة علوية أقل للشاشات الصغيرة */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>تعديل اسم المديرية</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_name">اسم المديرية القديم:</label>
+                <input type="text" id="id_name" name="name" class="form-control" value="{{ directorate.name }}" readonly>
+            </div>
+            {{ form.as_p }}
+            <input type="hidden" name="directorate_id" value="{{ directorate.id }}">
+            <div class="btn-group">
+                <button type="submit" name="save_directorate" class="btn btn-primary">حفظ</button>
+                <button type="reset" class="btn btn-warning">إعادة تعيين</button>
+            </div>
+        </form>
+        <a href="{% url 'manage_directorates' %}" class="btn btn-success btn-back">العودة</a>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

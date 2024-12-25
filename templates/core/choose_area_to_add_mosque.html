@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>اختر منطقة لإضافة مسجد</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #83a4d4, #b6fbff); /* خلفية متدرجة اللون */
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* جعل كل شيء في الوسط عموديًا وأفقيًا */
+        }
+        .container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة للبطاقة */
+            padding: 30px; /* حشوة داخلية */
+            border-radius: 10px; /* زوايا مستديرة */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف للبطاقة */
+            max-width: 600px; /* الحد الأقصى لعرض البطاقة */
+            width: 100%; /* عرض البطاقة بالكامل */
+            text-align: center; /* محاذاة النصوص إلى الوسط */
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff; /* لون النص */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .search-container button {
+            padding: 10px 20px;
+        }
+        .form-group select option {
+            padding: 10px; /* إضافة مسافات بين الخيارات */
+            border-bottom: 1px solid #ddd; /* إضافة حواف سفلية */
+        }
+        .form-group label {
+            color: #007bff; /* لون مميز للعنوان */
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية شفافة قليلاً عند الثبات */
+            padding: 10px 0; /* حشوة داخلية للعنوان */
+            z-index: 1000; /* لجعل العنوان يظهر فوق باقي المحتوى */
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* مسافة بين الأزرار */
+            margin-top: 20px; /* مسافة علوية للأزرار */
+        }
+        /* تنسيق متجاوب */
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* حشوة أقل للشاشات الصغيرة */
+            }
+            .search-container {
+                flex-direction: column;
+            }
+            .search-container input {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            .search-container button {
+                width: 100%;
+                padding: 10px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+    <script>
+        function filterAreas() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const areaList = document.getElementById('area_id');
+            const areas = areaList.getElementsByTagName('option');
+            const noResultsOption = document.getElementById('noResultsOption');
+
+            let hasResults = false;
+            for (let i = 0; i < areas.length; i++) {
+                const txtValue = areas[i].textContent || areas[i].innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    areas[i].style.display = '';
+                    hasResults = true;
+                } else {
+                    areas[i].style.display = 'none';
+                }
+            }
+
+            if (!hasResults) {
+                noResultsOption.style.display = '';
+            } else {
+                noResultsOption.style.display = 'none';
+            }
+        }
+
+        function showFilteredAreas() {
+            filterAreas();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>اختر منطقة لإضافة مسجد</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group search-container">
+                <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن منطقة...">
+                <button type="button" class="btn btn-primary" onclick="showFilteredAreas()">بحث</button>
+            </div>
+            <div class="form-group">
+                <label for="area_id">اختر المنطقة التي تريد إضافة المسجد فيها:</label>
+                <select id="area_id" name="area_id" class="form-control" size="10">
+                    <option id="noResultsOption" style="display: none;">لا توجد نتائج</option>
+                    {% for area in areas %}
+                        <option value="{{ area.id }}">{{ area.name }} ({{ area.directorate.name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-danger">إضافة مسجد</button>
+                <button type="reset" class="btn btn-warning">إعادة تعيين</button>
+            </div>
+        </form>
+        {% if error %}
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+        <div class="mt-3 text-center">
+            <a href="javascript:window.history.back();" class="btn btn-success">العودة</a>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-csbgg&ifd-lxu28v-_=luourg@4+rfgqo9^1-(*07jgfbew9!t
 # SECURITY WARNING: don't run with debug turned on in production!
 
 DEBUG = True
-ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -48,15 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-#MIDDLEWARE = [
-#    'django.middleware.security.SecurityMiddleware',
-#    'django.contrib.sessions.middleware.SessionMiddleware',
- #   'django.middleware.common.CommonMiddleware',
-  #  'django.middleware.csrf.CsrfViewMiddleware',
-#    'django.contrib.auth.middleware.AuthenticationMiddleware',
-#    'django.contrib.messages.middleware.MessageMiddleware',
-#    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-#]
+
 
 ROOT_URLCONF = 'alershadpro.urls'
 
@@ -150,10 +142,11 @@ STATICFILES_DIR= [
     
     os.path.join(BASE_DIR,'core/static')
 ]
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',  # تأكد من وجود هذا السطر
     'django.middleware.common.CommonMiddleware',

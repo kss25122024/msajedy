@@ -12,7 +12,7 @@ matplotlib.use('Agg')  # تعيين محرك الرسم غير التفاعلي
 import matplotlib.pyplot as plt
 import io
 import base64
-from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.pagesizes import letter, landscape #ffff
 from reportlab.pdfgen import canvas
 from reportlab.lib import utils
 import pandas as pd
@@ -161,10 +161,6 @@ def supervisor_view(request):
 
 
     
-    user_role = UserRole.objects.get(user=request.user)
-    if user_role.role != 'directorate_supervisor':
-        data['classification'] = mosque.classification
-    return JsonResponse(data)
 
 
 @login_required

@@ -12,11 +12,7 @@ class AreaForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'أدخل اسم المنطقة'}),
         }
 
-
-
-
-
-        
+     
 
 class DirectorateForm(forms.ModelForm):
     class Meta:

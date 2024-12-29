@@ -192,18 +192,20 @@
             </div>
             {% if user_role.role == 'admin' or user_role.role == 'manager' %}
             <div class="form-group">
-                <label for="classification">المكون الدعوي:</label>
+                <label for="classification">التصنيف :</label>
                 <select id="classification" name="classification" class="form-control" required>
-                    <option value="اصلاح" {% if mosque.classification == "اصلاح" %}selected{% endif %}>اصلاح</option>
-                    <option value="تبليغ" {% if mosque.classification == "تبليغ" %}selected{% endif %}>تبليغ</option>
-                    <option value="رشاد" {% if mosque.classification == "رشاد" %}selected{% endif %}>رشاد</option>
-                    <option value="رابطة" {% if mosque.classification == "رابطة" %}selected{% endif %}>رابطة</option>
-                    <option value="حكمة" {% if mosque.classification == "حكمة" %}selected{% endif %}>حكمة</option>
-                    <option value="احسان" {% if mosque.classification == "احسان" %}selected{% endif %}>احسان</option>
-                    <option value="الحجوري" {% if mosque.classification == "الحجوري" %}selected{% endif %}>الحجوري</option>
-                    <option value="محمد الامام" {% if mosque.classification == "محمد الامام" %}selected{% endif %}>محمد الامام</option>
-                    <option value="مستقل" {% if mosque.classification == "مستقل" %}selected{% endif %}>مستقل</option>
-                    <option value="أخرى" {% if mosque.classification == "أخرى" %}selected{% endif %}>أخرى</option>
+                    <option value="ص1" {% if mosque.classification == "ص1" %}selected{% endif %}>ص1</option>
+                    <option value="ط2" {% if mosque.classification == "ط2" %}selected{% endif %}>ط2</option>
+                    <option value="3س" {% if mosque.classification == "3س" %}selected{% endif %}>3س</option>
+                    <option value="4م" {% if mosque.classification == "4م" %}selected{% endif %}>4م</option>
+                    <option value="ج5" {% if mosque.classification == "ج5" %}selected{% endif %}>ج5</option>
+                    <option value="ك6" {% if mosque.classification == "ك6" %}selected{% endif %}>ك6</option>
+                    <option value="ش7" {% if mosque.classification == "ش7" %}selected{% endif %}>ش7</option>
+                    <option value= "ث8" {% if mosque.classification == "ث8" %}selected{% endif %}>ث8 </option>
+                    <option value="9ت" {% if mosque.classification == "9ت" %}selected{% endif %}>9ت</option>
+                    <option value="10ب" {% if mosque.classification == "10ب" %}selected{% endif %}>10ب</option>
+                    <option value="ف11" {% if mosque.classification == "ف11" %}selected{% endif %}>ف11</option>
+                    <option value="غير مصنف" {% if mosque.classification == "غير مصنف" %}selected{% endif %}>غير مصنف</option>
                 </select>
             </div>
             {% endif %}

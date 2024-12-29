@@ -87,9 +87,9 @@ class Mosque(models.Model):
     imam_phone = models.IntegerField(null=True, blank=True)
     imam_whatsapp = models.IntegerField(null=True, blank=True)
     classification = models.CharField(max_length=100,  choices=[
-        ('اصلاح', 'اصلاح'), ('تبليغ', 'تبليغ'), ('رشاد', 'رشاد'), ('رابطة', 'رابطة'), ('حكمة', 'حكمة'),
-        ('احسان', 'احسان'), ('الحجوري', 'الحجوري'), ('محمد الامام', 'محمد الامام'), ('مستقل', 'مستقل'), ('أخرى', 'أخرى')
-    ],default="default_classification")
+        ('ص1', 'ص1'), ('ط2', 'ط2 '), (' 3س', ' 3س'), (' 4م', ' 4م'), ('ج5 ', ' ج5'),
+        ('ك6 ', ' ك6'), (' ش7', 'ش7 '), (' ث8 ', '8ث '), (' 9ت', ' 9ت'), (' 10ب', '10ب '), ('ف11 ', '11ف')
+    ],default="  غير مصنف")
     
     def save(self, *args, **kwargs):
         if not self.has_awqaf:
